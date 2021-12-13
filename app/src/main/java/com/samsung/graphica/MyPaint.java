@@ -19,6 +19,7 @@ public class MyPaint extends View {
     int wight, height;
     Paint paint;
     Bitmap bitmapTree, bitmapToy, bitmapBasket, bitmapMishura;
+    Cords cords = new Cords();
     Rect rect;
     Toy button, activeToy;
     Basket basket;
@@ -57,6 +58,9 @@ public class MyPaint extends View {
         for (int i = 0; i < toys.size(); i++) {
             toys.get(i).onDraw(canvas);
         }
+        if (flag) {
+            canvas.drawLine(cords.bx, cords.by, cords.ex, cords.ey, paint);
+        }
         super.onDraw(canvas);
     }
 
@@ -65,7 +69,8 @@ public class MyPaint extends View {
         switch (event.getActionMasked()){
             case MotionEvent.ACTION_DOWN:{
                 if (flag) {
-
+                    cords.bx = event.getX();
+                    cords.by = event.getY();
                 }
                 else {
                     for (int i = 0; i < toys.size(); i++) {
@@ -88,19 +93,29 @@ public class MyPaint extends View {
                 break;
             }
             case MotionEvent.ACTION_MOVE:{
-                if (activeToy != null) {
-                    activeToy.x = event.getX() - bitmapToy.getWidth() / 2;
-                    activeToy.y = event.getY() - bitmapToy.getHeight() / 2;
-                    invalidate();
+                if (!flag) {
+                    if (activeToy != null) {
+                        activeToy.x = event.getX() - bitmapToy.getWidth() / 2;
+                        activeToy.y = event.getY() - bitmapToy.getHeight() / 2;
+                        invalidate();
+                    }
                 }
                 break;
             }
             case MotionEvent.ACTION_UP:{
-                if (basket.bound(event.getX(), event.getY()) && activeToy != null) {
-                    toys.remove(activeToy);
+                if (flag) {
+                    cords.ex = event.getX();
+                    cords.ey = event.getY();
+                    invalidate();
+                    flag = false;
                 }
-                activeToy = null;
-                invalidate();
+                else {
+                    if (basket.bound(event.getX(), event.getY()) && activeToy != null) {
+                        toys.remove(activeToy);
+                    }
+                    activeToy = null;
+                    invalidate();
+                }
             }
         }
         return true;
