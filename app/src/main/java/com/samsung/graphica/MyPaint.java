@@ -59,6 +59,7 @@ public class MyPaint extends View {
             toys.get(i).onDraw(canvas);
         }
         if (flag) {
+            Log.d("My", "Рисуем");
             canvas.drawLine(cords.bx, cords.by, cords.ex, cords.ey, paint);
         }
         super.onDraw(canvas);
@@ -69,6 +70,7 @@ public class MyPaint extends View {
         switch (event.getActionMasked()){
             case MotionEvent.ACTION_DOWN:{
                 if (flag) {
+                    Log.d("My", "Начало линии");
                     cords.bx = event.getX();
                     cords.by = event.getY();
                 }
@@ -104,6 +106,10 @@ public class MyPaint extends View {
             }
             case MotionEvent.ACTION_UP:{
                 if (flag) {
+                    if (mishura.bound(event.getX(), event.getY())) {
+                        return true;
+                    }
+                    Log.d("My", "Конец линии");
                     cords.ex = event.getX();
                     cords.ey = event.getY();
                     invalidate();
